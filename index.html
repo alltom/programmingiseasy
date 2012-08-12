@@ -1,0 +1,151 @@
+<!doctype html>
+<title>Programming is Easy</title>
+<style>
+
+@import url(codemirror.css);
+@import url(http://fonts.googleapis.com/css?family=Cantora+One);
+
+div#body {
+  width: 35em;
+  margin: 0 auto 10em;
+  font-family: sans-serif;
+  color: #222;
+  line-height: 1.4;
+}
+h1, h2, strong {
+  font-family: 'Cantora One', sans-serif;
+}
+h2 {
+  margin-top: 4em;
+}
+div.expanded {
+  margin: 2em 0 2em -8em;
+  width: 51em;
+}
+table.playground {
+  width: 100%;
+}
+table.playground td {
+  width: 50%;
+  padding: 0.5em;
+}
+table.playground .CodeMirror {
+  border: 1px dotted black;
+  font-family: sans-serif;
+  width: 100%;
+}
+table.playground .CodeMirror-scroll {
+  overflow: auto;
+  height: 200px;
+  font-size: 20px;
+  line-height: 24px;
+}
+table.playground .CodeMirror-lines {
+  padding: 5px;
+}
+table.playground .CodeMirror-lines .error {
+  background: #f00;
+}
+table.playground svg {
+  width: 100%;
+  border: 1px dotted black;
+  height: 200px;
+}
+
+</style>
+
+<script src="jquery.js"></script>
+<script src="codemirror.js"></script>
+<script src="d3.js"></script>
+<script src="underscore.js"></script>
+<script src="script.js"></script>
+
+<div id="body">
+
+<h1>Programming is Easy</h1>
+
+<p>Learning how to program is just learning how to give clear instructions. Here's a program:
+
+<blockquote>
+  Run around outside with your pants on your head until I tell you to stop.
+</blockquote>
+
+<p>Here's another program:
+
+<blockquote>
+  Whenever I tell you to do something, think about whether it's a good idea, and then do it.
+</blockquote>
+
+<p>It's easy once you get the hang of it.
+
+<p>The tricky thing about programming a <em>computer</em> is that there are arbitrary rules you have to follow. For example, maybe you have to use really short sentences:
+
+<blockquote>
+  Put pants on head. Go outside. Run around. Continue until I say.
+</blockquote>
+
+<p>Maybe you aren't allowed to use words like &lsquo;it&rsquo;:
+
+<blockquote>
+  <strong>X</strong> is something for you to do. When I give you an <strong>X</strong>, think about whether <strong>X</strong> is a good idea and then do <strong>X</strong>.
+</blockquote>
+
+<p>Sometimes people make a bunch of those rules, put them together, and call it a <strong>Programming Language</strong>. Here's a language for you to try:
+
+<ul>
+  <li>The only word you can use is &ldquo;circle&rdquo;.
+  <li>A circle is drawn for every &ldquo;circle&rdquo; in your program.
+  <li>Each sentence's circles are drawn on their own line.
+</ul>
+
+<p>You can edit the program below to try this language out:
+
+<div class="expanded">
+  <table class="playground" id="circles-playground">
+    <tr>
+      <th>Circle Language Program:</th>
+      <th>Result:</th>
+    </tr>
+    <tr>
+      <td><textarea>Circle circle, circle circle circle. Circle circle? Circle...? Circle, circle, circle!</textarea></td>
+      <td><svg></svg></td>
+    </tr>
+  </table>
+</div>
+<script>
+shapeLanguage($("#circles-playground textarea").get(0), $("#circles-playground svg").get(0), "circle", circleMaker);
+</script>
+
+<p>In plain English, there are a lot of ways for you to tell someone how to draw a few rows of circles. In the <strong>Circle Language</strong>, there are far fewer, but they can be just as fun.
+
+
+<h2>Rules Change!</h2>
+
+<p>There are many <strong>Programming Languages</strong>! This next one lets you use the word &lsquo;square&rsquo;, but now &lsquo;circle&rsquo; won&rsquo;t work:
+
+<div class="expanded">
+  <table class="playground" id="squares-playground">
+    <tr>
+      <th>Square Language Program:</th>
+      <th>Result:</th>
+    </tr>
+    <tr>
+      <td><textarea>Square, square, square, SQUARE! Square?</textarea></td>
+      <td><svg></svg></td>
+    </tr>
+  </table>
+</div>
+<script>
+shapeLanguage($("#squares-playground textarea").get(0), $("#squares-playground svg").get(0), "square", squareMaker);
+</script>
+
+<p><strong>Programming Languages</strong> do unexpected things when you don't follow the rules. If you use the wrong words in the <strong>Circle</strong> or <strong>Square</strong> languages, you get the wrong shapes entirely!
+
+<p>You might want a language that lets you make both circles <em>and</em> squares. Sorry, you'll have to make it yourself one day.
+
+
+<h2>To be continued</h2>
+
+<p>For now, you'll have to search the web for more information about programming. I haven't written the rest of this page yet.
+
+</div>
