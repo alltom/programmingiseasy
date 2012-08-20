@@ -1,4 +1,19 @@
 
+function makePlayground(options) {
+	options || (options = {});
+	var $container = $("<div class='expanded' />").appendTo(document.body);
+	var $table = $("<table class='playground' />").appendTo($container);
+	var $headerRow = $("<tr />").appendTo($table);
+	var $programHeader = $("<th />").appendTo($headerRow).text(options.programHeader || "Program:");
+	var $resultHeader = $("<th />").appendTo($headerRow).text(options.resultHeader || "Result:");
+	var $programRow = $("<tr />").appendTo($table);
+	var $programCell = $("<td />").appendTo($programRow);
+	var $programTextarea = $("<textarea />").appendTo($programCell).text(options.program || "");
+	var $resultsCell = $("<td />").appendTo($programRow);
+	var $svg = $(document.createElementNS("http://www.w3.org/2000/svg", "svg")).appendTo($resultsCell);
+	return { textarea: $programTextarea.get(0), svg: $svg.get(0) };
+}
+
 function buildMap(text, expectedWord) {
 	var punctuation = /\s*[.?!]+\s*/g;
 	var spaces = /\s+/g;
@@ -124,9 +139,9 @@ function isWord(word, expectedWord) {
 
 var greens = d3.interpolateHsl(d3.hsl(80, 0.5, 0.5), d3.hsl(160, 0.5, 0.5));
 
-function shapeLanguage(textArea, svg, specialWord, glyphMaker) {
+function shapeLanguage(playground, specialWord, glyphMaker) {
 	var codeMirror, oldText, wordMap;
-	var svg = d3.select(svg);
+	var svg = d3.select(playground.svg);
 	var changes = [];
 	var marks = [];
 
@@ -157,7 +172,7 @@ function shapeLanguage(textArea, svg, specialWord, glyphMaker) {
 		}
 	}
 
-	codeMirror = CodeMirror.fromTextArea(textArea, {
+	codeMirror = CodeMirror.fromTextArea(playground.textarea, {
 		smartIndent: false,
 		electricChars: false,
 		autoClearEmptyLines: false,

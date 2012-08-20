@@ -5,10 +5,10 @@
 @import url(codemirror.css);
 @import url(http://fonts.googleapis.com/css?family=Cantora+One);
 
-div#body {
+body {
   width: 35em;
   margin: 0 auto 10em;
-  font-family: sans-serif;
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
   color: #222;
   line-height: 1.4;
 }
@@ -60,7 +60,6 @@ table.playground svg {
 <script src="underscore.js"></script>
 <script src="script.js"></script>
 
-<div id="body">
 
 <h1>Programming is Easy</h1>
 
@@ -100,20 +99,8 @@ table.playground svg {
 
 <p>You can edit the program below to try this language out:
 
-<div class="expanded">
-  <table class="playground" id="circles-playground">
-    <tr>
-      <th>Circle Language Program:</th>
-      <th>Result:</th>
-    </tr>
-    <tr>
-      <td><textarea>Circle circle, circle circle circle. Circle circle? Circle...? Circle, circle, circle!</textarea></td>
-      <td><svg></svg></td>
-    </tr>
-  </table>
-</div>
 <script>
-shapeLanguage($("#circles-playground textarea").get(0), $("#circles-playground svg").get(0), "circle", circleMaker);
+shapeLanguage(makePlayground({ programHeader: "Circle Language Program:", program: "Circle circle, circle circle circle. Circle circle? Circle...? Circle, circle, circle!" }), "circle", circleMaker);
 </script>
 
 <p>In plain English, there are a lot of ways for you to tell someone how to draw a few rows of circles. In the <strong>Circle Language</strong>, there are far fewer, but they can be just as fun.
@@ -123,20 +110,8 @@ shapeLanguage($("#circles-playground textarea").get(0), $("#circles-playground s
 
 <p>There are many <strong>Programming Languages</strong>! This next one lets you use the word &lsquo;square&rsquo;, but now &lsquo;circle&rsquo; won&rsquo;t work:
 
-<div class="expanded">
-  <table class="playground" id="squares-playground">
-    <tr>
-      <th>Square Language Program:</th>
-      <th>Result:</th>
-    </tr>
-    <tr>
-      <td><textarea>Square, square, square, SQUARE! Square?</textarea></td>
-      <td><svg></svg></td>
-    </tr>
-  </table>
-</div>
 <script>
-shapeLanguage($("#squares-playground textarea").get(0), $("#squares-playground svg").get(0), "square", squareMaker);
+shapeLanguage(makePlayground({ programHeader: "Square Language Program:", program: "Square, square, square, SQUARE! Square?" }), "square", squareMaker);
 </script>
 
 <p><strong>Programming Languages</strong> do unexpected things when you don't follow the rules. If you use the wrong words in the <strong>Circle</strong> or <strong>Square</strong> languages, you get the wrong shapes entirely!
@@ -147,5 +122,3 @@ shapeLanguage($("#squares-playground textarea").get(0), $("#squares-playground s
 <h2>To be continued</h2>
 
 <p>For now, you'll have to search the web for more information about programming. I haven't written the rest of this page yet.
-
-</div>
