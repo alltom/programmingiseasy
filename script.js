@@ -14,7 +14,7 @@ function makePlayground(options) {
 	return { textarea: $programTextarea.get(0), svg: $svg.get(0) };
 }
 
-function buildMap(text, expectedWord) {
+function buildMap(text, expectedWord, cursorPosition) {
 	var punctuation = /\s*[.?!]+\s*/g;
 	var spaces = /\s+/g;
 
@@ -42,14 +42,26 @@ function buildMap(text, expectedWord) {
 		var lastWordIndex = 0;
 		while (spMatches = spaces.exec(sentence)) {
 			var word = sentence.slice(lastWordIndex, spMatches.index);
+			var range = [charOffset + lastWordIndex, charOffset + spMatches.index];
 			if (word) {
-				words.push({ word: word, range: [charOffset + lastWordIndex, charOffset + spMatches.index], valid: isWord(word, expectedWord) });
+				words.push({
+					word: word,
+					range: range,
+					valid: isWord(word, expectedWord),
+					selected: cursorPosition >= range[0] && cursorPosition <= range[1],
+				});
 				lastWordIndex = spaces.lastIndex;
 			}
 		}
 		var lastWord = sentence.slice(lastWordIndex);
 		if (lastWord) {
-			words.push({ word: lastWord, range: [charOffset + lastWordIndex, charOffset + lastWordIndex + lastWord.length], valid: isWord(lastWord, expectedWord) });
+			var range = [charOffset + lastWordIndex, charOffset + lastWordIndex + lastWord.length];
+			words.push({
+				word: lastWord,
+				range: range,
+				valid: isWord(lastWord, expectedWord),
+				selected: cursorPosition >= range[0] && cursorPosition <= range[1],
+			});
 		}
 		return words;
 	};
@@ -138,6 +150,7 @@ function isWord(word, expectedWord) {
 }
 
 var greens = d3.interpolateHsl(d3.hsl(80, 0.5, 0.5), d3.hsl(160, 0.5, 0.5));
+var yellows = d3.interpolateHsl(d3.hsl(40, 0.8, 0.6), d3.hsl(40, 0.8, 0.6));
 
 function shapeLanguage(playground, specialWord, glyphMaker) {
 	var codeMirror, oldText, wordMap;
@@ -147,7 +160,7 @@ function shapeLanguage(playground, specialWord, glyphMaker) {
 
 	var processChanges = _.debounce(function (codeMirror) {
 		warp(wordMap, changes);
-		wordMap = buildMap(codeMirror.getValue(), specialWord);
+		wordMap = buildMap(codeMirror.getValue(), specialWord, linearizePos(codeMirror.getCursor(), oldText));
 		oldText = codeMirror.getValue();
 		changes = [];
 
@@ -163,10 +176,12 @@ function shapeLanguage(playground, specialWord, glyphMaker) {
 			var sentence = wordMap[i];
 			for (var j in sentence.words) {
 				var word = sentence.words[j];
-				if (!isWord(word.word, specialWord)) {
-					var start = delinearizePos(word.range[0], codeMirror.getValue());
-					var end = delinearizePos(word.range[1], codeMirror.getValue());
-					marks.push(codeMirror.markText(start, end, "error"));
+				var start = delinearizePos(word.range[0], codeMirror.getValue());
+				var end = delinearizePos(word.range[1], codeMirror.getValue());
+				if (isWord(word.word, specialWord)) {
+					marks.push(codeMirror.markText(start, end, "word"));
+				} else {
+					marks.push(codeMirror.markText(start, end, "word error"));
 				}
 			}
 		}
@@ -186,7 +201,10 @@ function shapeLanguage(playground, specialWord, glyphMaker) {
 				change = change.next;
 			}
 			processChanges(codeMirror);
-		}
+		},
+		onCursorActivity: function (codeMirror) {
+			processChanges(codeMirror);
+		},
 	});
 
 	var renderGlyph = function (stage) {
@@ -194,7 +212,7 @@ function shapeLanguage(playground, specialWord, glyphMaker) {
 			var selector = d3.select(this);
 			var bigness = isWord(d.word, specialWord);
 			if (bigness) {
-				glyphMaker[stage](selector, bigness);
+				glyphMaker[stage](selector, bigness, d.selected);
 			} else {
 				xMaker[stage](selector);
 			}
@@ -246,23 +264,24 @@ function shapeLanguage(playground, specialWord, glyphMaker) {
 	};
 
 	oldText = codeMirror.getValue();
-	wordMap = buildMap(codeMirror.getValue(), specialWord);
+	wordMap = buildMap(codeMirror.getValue(), specialWord, linearizePos(codeMirror.getCursor(), oldText));
 	render();
 }
 
 var circleMaker = {
-	enter: function (parent, bigness) {
+	enter: function (parent, bigness, selected) {
 		bigness || (bigness = 0.5);
 		parent.append("circle")
-		    .style("fill", greens(Math.random()))
+		    .style("fill", selected ? yellows(Math.random()) : greens(Math.random()))
 		    .attr("r", 0)
 		  .transition()
 		    .attr("r", 5 + bigness*10);
 	},
-	update: function (parent, bigness) {
+	update: function (parent, bigness, selected) {
 		bigness || (bigness = 0.5);
 		parent.selectAll("circle")
 		  .transition()
+		    .style("fill", selected ? yellows(Math.random()) : greens(Math.random()))
 		    .attr("r", 5 + bigness*10);
 	},
 	exit: function (parent) {
@@ -274,22 +293,23 @@ var circleMaker = {
 };
 
 var squareMaker = {
-	enter: function (parent, bigness) {
+	enter: function (parent, bigness, selected) {
 		bigness || (bigness = 0.5);
 		var r = 5 + bigness*10;
 		parent.append("rect")
-		    .style("fill", greens(Math.random()))
+		    .style("fill", selected ? yellows(Math.random()) : greens(Math.random()))
 		  .transition()
 		    .attr("x", -r)
 		    .attr("y", -r)
 		    .attr("width", r*2)
 		    .attr("height", r*2);
 	},
-	update: function (parent, bigness) {
+	update: function (parent, bigness, selected) {
 		bigness || (bigness = 0.5);
 		var r = 5 + bigness*10;
 		parent.selectAll("rect")
 		  .transition()
+		    .style("fill", selected ? yellows(Math.random()) : greens(Math.random()))
 		    .attr("x", -r)
 		    .attr("y", -r)
 		    .attr("width", r*2)
